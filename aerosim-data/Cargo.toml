@@ -29,10 +29,11 @@ turbojpeg = { version = "1.3.0", default-features = false, features = ["cmake"] 
 
 [features]
 default = ["kafka"]
-middleware = ["r2r", "dds", "kafka"]
+middleware = ["r2r", "dds", "kafka", "ros2"]
 
 dds = ["cyclors", "cdr"]
 kafka = ["rdkafka", "futures-util", "tokio"]
+ros2 = ["r2r"]
 
 [dependencies.r2r]
 version = "0.9.1"
