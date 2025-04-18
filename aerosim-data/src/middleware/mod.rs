@@ -19,6 +19,8 @@ pub mod common;
 pub mod dds;
 #[cfg(feature = "kafka")]
 pub mod kafka;
+#[cfg(feature = "ros2")]
+pub mod ros2;
 
 use common::message;
 pub use common::{Message, Metadata};
@@ -29,6 +31,8 @@ pub use aerosim_macros::AerosimDeserializeEnum;
 pub use dds::{DDSMiddleware, DDSSerializer};
 #[cfg(feature = "kafka")]
 pub use kafka::{BincodeSerializer, KafkaMiddleware, KafkaSerializer};
+#[cfg(feature = "ros2")]
+pub use ros2::{ROS2Middleware, ROS2Serializer};
 
 pub type CallbackClosureRaw = Box<dyn Fn(&[u8]) -> Result<(), Box<dyn Error>> + Send + Sync>;
 pub type CallbackClosure<T> = Box<dyn Fn(T, Metadata) -> Result<(), Box<dyn Error>> + Send + Sync>;
@@ -427,6 +431,8 @@ pub enum MiddlewareEnum {
     DDSMiddleware,
     #[cfg(feature = "kafka")]
     KafkaMiddleware,
+    #[cfg(feature = "ros2")]
+    ROS2Middleware,
 }
 
 #[enum_dispatch]
@@ -437,6 +443,8 @@ pub enum SerializerEnum {
     KafkaSerializer,
     #[cfg(feature = "kafka")]
     BincodeSerializer,
+    #[cfg(feature = "ros2")]
+    ROS2Serializer,
 }
 
 pub struct MiddlewareRegistry {
@@ -481,6 +489,10 @@ static MIDDLEWARE_REGISTRY: MiddlewareRegistry = {
     #[cfg(feature = "kafka")]
     registry
         .register("kafka", MiddlewareEnum::from(KafkaMiddleware::new()))
+        .ok();
+    #[cfg(feature = "ros2")]
+    registry
+        .register("ros2", MiddlewareEnum::from(ROS2Middleware::new()))
         .ok();
     registry
 };
